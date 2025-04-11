@@ -11,5 +11,12 @@ const increment = () => {
 
 <template>
   <h1 class="text-xl">Hi from Vue app</h1>
-  <button @click="increment">Count is: {{ count }}</button>
+  <v-btn
+    color="primary"
+    rounded="xl"
+    class="bg-blue-500 text-white"
+    @click="increment"
+  >
+    {{ count }}
+  </v-btn>
 </template>
