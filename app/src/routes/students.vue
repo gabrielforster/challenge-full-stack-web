@@ -21,9 +21,11 @@ onMounted(async () => {
     <header class="flex items-center justify-between p-4 border-b border-gray-300">
       <h1 class="text-2xl font-bold">Alunos</h1>
 
-      <v-btn variant="tonal">
-        Cadastrar aluno
-      </v-btn>
+      <RouterLink to="/alunos/cadastrar">
+        <v-btn variant="tonal">
+          Cadastrar aluno
+        </v-btn>
+      </RouterLink>
     </header>
 
     <section>

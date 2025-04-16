@@ -4,6 +4,7 @@ import { registerStudentSchema } from "../schemas/register-student.schema"
 import { parseBodyMiddleware } from "../middlewares/parse-body.middleware"
 import { RegisterStudentUseCase } from "../use-cases/students/register-students.use-case"
 import { ListStudentsUseCase } from "../use-cases/students/list-students.use-case"
+import { GetNextRaUseCase } from "../use-cases/students/get-next-ra"
 
 export const studentsController = Router()
 
@@ -45,6 +46,15 @@ studentsController.get(
   async (req, res) => {
     const list = await new ListStudentsUseCase(req.repositories.student).execute()
     res.status(200).json(list);
+    return
+  }
+)
+
+studentsController.get(
+  "/next-ra",
+  async (req, res) => {
+    const nextRa = await new GetNextRaUseCase(req.repositories.student).execute()
+    res.status(200).json({ ra: nextRa });
     return
   }
 )

@@ -2,6 +2,9 @@
 import { defineComponent } from "vue"
 import { RouterLink, RouterView } from "vue-router"
 import { Home, Users, Book } from "lucide-vue-next"
+import { useToastsStore } from "./stores/toast"
+
+const messages = useToastsStore()
 
 const routes = [
   { path: "/", label: "Dashboard", icon: Home },
@@ -10,7 +13,7 @@ const routes = [
 </script>
 
 <template>
-  <main class="flex min-h-screen bg-gray-100">
+  <main class="flex min-h-screen bg-gray-50">
     <aside class="flex flex-col w-1/5 min-h-screen border-r border-gray-300 bg-white text-center p-4">
       <h1 class="text-2xl font-bold">Grupo A</h1>
 
@@ -38,5 +41,6 @@ const routes = [
     </aside>
 
     <RouterView />
+    <v-snackbar-queue v-model="messages.queue"></v-snackbar-queue>
   </main>
 </template>

@@ -4,7 +4,7 @@ import { StudentRepository } from "../../repositories/students/interface";
 export class RegisterStudentUseCase {
   constructor (private readonly stundentRepo: StudentRepository) { }
 
-  async execute (student: Omit<Student, "ra">): Promise<Student> {
+  async execute (student: Omit<Student, "phone" | "password">): Promise<Omit<Student, "password">> {
     const studentExists = await this.stundentRepo.findByEmail(student.email);
 
     if (studentExists)

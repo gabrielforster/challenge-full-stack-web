@@ -31,7 +31,7 @@ export class PostgresStudentRepository implements StudentRepository {
     }
   }
 
-  private fromEntityToDb(student: Omit<Student, "ra"> & { ra?: string }): Omit<DBStudent, "ra"> & { ra?: number } {
+  private fromEntityToDb(student: Omit<Student, "ra" | "password"> & { ra?: string, password?: string }): Omit<DBStudent, "ra" | "password"> & { ra?: number, password?: string } {
     return {
       ra: student.ra ? parseInt (student.ra) : undefined,
       full_name: student.name,
@@ -61,15 +61,29 @@ export class PostgresStudentRepository implements StudentRepository {
     throw new Error("Method not implemented.");
   }
 
+  async getNextRa(): Promise<string> {
+    const { rows } = await this.conn.raw(`
+      SELECT nextval('students_ra_seq') as ra
+    `)
+
+    const row = rows[0]
+    return row.ra
+  }
+
   async listAll(): Promise<Student[]> {
     const dbStudents = await this.conn("students").select("*")
     const domainStudents = dbStudents.map((dbStudent) => this.fromDbToEntity(dbStudent))
     return domainStudents
   }
 
-  async create(student: Omit<Student, "ra">): Promise<Student> {
+  async create(student: Omit<Student, "password">): Promise<Omit<Student, "password">> {
+    // TODO: handle ra conflict
+
     const [insertedItem] = await this.conn("students")
-      .insert(this.fromEntityToDb(student))
+      .insert({
+        ...this.fromEntityToDb(student),
+        password: student.cpf,
+      })
       .returning<[DBStudent]>("*")
 
     return {
