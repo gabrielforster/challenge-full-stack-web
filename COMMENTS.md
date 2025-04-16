@@ -14,7 +14,7 @@ No código, o backend está organizado em diversas camadas: Middlewares, Control
 
 ### Diagrama
 
-![Architecture Diagram](../.github/images/architecture.png)
+![Architecture Diagram](.github/images/architecture.png)
 
 ### Justificativa
 
