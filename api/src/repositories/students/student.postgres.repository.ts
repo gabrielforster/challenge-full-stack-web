@@ -54,8 +54,20 @@ export class PostgresStudentRepository implements StudentRepository {
     return this.fromDbToEntity(userWithEmail)
   }
 
-  findByRa(ra: string): Promise<Student | null> {
-    throw new Error("Method not implemented.");
+  async findByRa(ra: string): Promise<Student | null> {
+    const row = await this.conn("students")
+      .where("ra", ra)
+      .select("*")
+      .first<DBStudent | undefined>()
+
+    if (row === undefined)
+      return null
+
+    const item = this.fromDbToEntity(row)
+    // @ts-expect-error Deleting student password
+    delete item.password
+
+    return item
   }
 
   async getNextRa(): Promise<string> {
@@ -68,7 +80,7 @@ export class PostgresStudentRepository implements StudentRepository {
   }
 
   async listAll(): Promise<Student[]> {
-    const dbStudents = await this.conn("students").select("*")
+    const dbStudents = await this.conn("students").where({ deleted_at: null }).select("*")
     const domainStudents = dbStudents.map((dbStudent) => this.fromDbToEntity(dbStudent))
     return domainStudents
   }
@@ -89,11 +101,20 @@ export class PostgresStudentRepository implements StudentRepository {
     }
   }
 
-  update(student: Student): Promise<Student> {
-    throw new Error("Method not implemented.");
+  async update(student: Student): Promise<void> {
+    await this.conn("students")
+      .where("ra", student.ra)
+      .update({
+        ...this.fromEntityToDb(student),
+        updated_at: new Date(),
+      })
   }
 
-  delete(ra: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async delete(ra: string): Promise<void> {
+    await this.conn("students")
+      .where("ra", ra)
+      .update({
+        deleted_at: new Date(),
+      })
   }
 }

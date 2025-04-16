@@ -12,6 +12,7 @@ import * as directives from "vuetify/directives"
 import Home from "./routes/home.vue"
 import Students from "./routes/students.vue"
 import StudentsCreate from "./routes/students-create.vue"
+import StudentsEdit from "./routes/students-edit.vue"
 
 const vuetify = createVuetify({
   components,
@@ -24,6 +25,7 @@ const router = createRouter({
     { path: "/", component: Home },
     { path: "/alunos", component: Students },
     { path: "/alunos/cadastrar", component: StudentsCreate },
+    { path: "/alunos/:ra/editar", component: StudentsEdit },
   ]
 })
 
