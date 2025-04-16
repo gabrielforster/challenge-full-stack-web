@@ -41,7 +41,7 @@ A escolha se baseia em um sólido conhecimento sobre aplicações SPA e APIs RES
 
 ## O que eu melhoraria se tivesse mais tempo
 
-Acredito que alteraria o aspecto visual do projeto.
+Terminaria a parte de segurança, com autenticação e autorização, e alteraria o aspecto visual do projeto.
 
 ## Quais requisitos obrigatórios não foram atendidos
 
