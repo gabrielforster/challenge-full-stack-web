@@ -10,7 +10,6 @@ export async function up(knex: Knex): Promise<void> {
       email VARCHAR(255) NOT NULL,
       password TEXT NOT NULL,
       cpf CHAR(11) NOT NULL,
-      birth_date DATE NOT NULL,
       phone VARCHAR(15),
 
       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

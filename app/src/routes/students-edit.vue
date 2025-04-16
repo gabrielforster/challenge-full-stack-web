@@ -9,50 +9,40 @@ const { add: addToast } = useToastsStore()
 const router = useRouter()
 
 const search = ref("")
-const loading = ref(false)
-
-const ra = ref(0)
-const name = ref("")
-const email = ref("")
-const cpf = ref("")
+const loading = ref(true)
+const student = ref<{
+  ra: string
+  name: string
+  email: string
+  cpf: string
+} | null>(null)
 
 onMounted(async () => {
   loading.value = true
-  const { data } = await api.get("/students/next-ra")
-  ra.value = data.ra
-  loading.value = false
+  try {
+    const { data } = await api.get(`/students/${router.currentRoute.value.params.ra}`)
+    student.value = data
+  } catch (err) {
+    console.error("error while fetching student", err)
+  } finally {
+    loading.value = false
+  }
 })
 
-async function onRegister () {
+async function onSave () {
   loading.value = true
 
   try {
-    if (!name.value || !email.value || !cpf.value) {
+    if (!student.value.name || !student.value.email) {
       addToast("Preencha todos os campos!")
       return
     }
 
-    if (!/^[0-9]{11}$/.test(cpf.value)) {
-      addToast("CPF inválido")
-      return
-    }
+    await api.patch("/students", student.value)
 
-    const { data } = await api.post("/students", {
-      ra: ra.value,
-      name: name.value,
-      email: email.value,
-      cpf: cpf.value,
-    })
+    addToast(`Aluno cadastrado com sucesso! ${student.value.name} cadastrado com RA: ${student.value.ra}`)
 
-    if (data) {
-      name.value = ""
-      email.value = ""
-      cpf.value = ""
-
-      addToast(`Aluno cadastrado com sucesso! ${data.name} cadastrado com RA: ${data.ra}`)
-
-      router.push("/alunos")
-    }
+    router.push("/alunos")
   } catch (err) {
     console.error("error while registering student", err)
   } finally {
@@ -64,20 +54,41 @@ async function onRegister () {
 <template>
   <section class="p-4 flex-1 flex flex-col">
     <header class="flex items-center justify-between p-4 border-b border-gray-300">
-      <h1 class="text-2xl font-bold">Cadastrar Aluno</h1>
+      <h1 class="text-2xl font-bold">
+        Editando Aluno
+        <span v-if="student">
+          {{ student.name }}
+        </span>
+      </h1>
     </header>
 
     <section class="flex flex-col flex-1">
-      <div>
+      <div v-if="loading" class="flex items-center justify-center flex-1">
+        <v-progress-circular
+          indeterminate
+          color="blue"
+        />
+      </div>
+
+      <div v-else-if="student === null" class="flex items-center justify-center flex-1 h-full">
+        <v-alert
+          type="error"
+          class="my-4"
+        >
+          Aluno não encontrado
+        </v-alert>
+      </div>
+
+      <div v-else>
         <v-text-field
-          v-model="ra"
+          v-model="student.ra"
           label="RA"
           class="my-4 w-full"
           disabled
         />
 
         <v-text-field
-          v-model="name"
+          v-model="student.name"
           label="Nome"
           class="my-4 w-full"
           placeholder="Digite o nome do aluno"
@@ -85,7 +96,7 @@ async function onRegister () {
         />
 
         <v-text-field
-          v-model="email"
+          v-model="student.email"
           label="Email"
           class="my-4 w-full"
           placeholder="Digite o email do aluno"
@@ -93,23 +104,23 @@ async function onRegister () {
         />
 
         <v-text-field
-          v-model="cpf"
+          v-model="student.cpf"
           label="CPF"
           class="my-4 w-full"
           placeholder="Digite o CPF do aluno"
-          :disabled="loading"
+          disabled
         />
       </div>
 
-      <footer class="flex-1 space-x-2 flex items-end justify-end">
+      <footer v-show="!loading" class="flex-1 space-x-2 flex items-end justify-end">
         <v-btn variant="tonal">
           <RouterLink to="/alunos">
             Cancelar
           </RouterLink>
         </v-btn>
 
-        <v-btn class="!bg-blue-500 text-white" @click="onRegister">
-          Cadastrar
+        <v-btn class="!bg-blue-500 text-white" @click="onSave">
+          Salvar
         </v-btn>
       </footer>
     </section>

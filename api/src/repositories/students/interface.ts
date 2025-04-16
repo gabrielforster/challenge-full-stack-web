@@ -6,6 +6,6 @@ export interface StudentRepository {
   listAll(): Promise<Student[]>;
   getNextRa(): Promise<string>;
   create(student: Omit<Student, "password">): Promise<Omit<Student, "password">>;
-  update(student: Student): Promise<Student>;
+  update(student: Student): Promise<void>;
   delete(ra: string): Promise<void>;
 }
