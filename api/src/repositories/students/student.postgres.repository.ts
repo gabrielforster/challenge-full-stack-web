@@ -8,7 +8,6 @@ type DBStudent = {
   email: string;
   password: string;
   cpf: string;
-  birth_date: Date;
   phone?: string;
   created_at: Date;
   updated_at: Date;
@@ -25,7 +24,6 @@ export class PostgresStudentRepository implements StudentRepository {
       password: dbStudent.password,
       cpf: dbStudent.cpf,
       phone: dbStudent.phone,
-      birthDate: dbStudent.birth_date,
       createdAt: dbStudent.created_at,
       updatedAt: dbStudent.updated_at,
     }
@@ -33,13 +31,12 @@ export class PostgresStudentRepository implements StudentRepository {
 
   private fromEntityToDb(student: Omit<Student, "ra" | "password"> & { ra?: string, password?: string }): Omit<DBStudent, "ra" | "password"> & { ra?: number, password?: string } {
     return {
-      ra: student.ra ? parseInt (student.ra) : undefined,
+      ra: student.ra ? parseInt(student.ra) : undefined,
       full_name: student.name,
       email: student.email,
       password: student.password,
       cpf: student.cpf,
       phone: student.phone,
-      birth_date: new Date(student.birthDate),
       created_at: student.createdAt,
       updated_at: student.updatedAt,
     }

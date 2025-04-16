@@ -5,7 +5,6 @@ export type Student = {
   cpf: string;
   password: string;
   phone?: string;
-  birthDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }
